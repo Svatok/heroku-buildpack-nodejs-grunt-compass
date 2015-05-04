@@ -101,6 +101,41 @@ npm can be run with a verbose flag to help debugging if something fails when ins
 
 Thanks to [mackwic](https://github.com/mackwic) for these extensions.
 
+If any ruby package (like compass) fails to install or run, check to make sure the ruby version listed in the compile script are correct to the latest Heroku versions of ruby.
+
+To ensure that the correct version of ruby is being copied into the $build_dir/vendor folder, add the code
+
+    OUTPUT="$(ls -a /app/vendor)"
+    echo "${OUTPUT}"
+
+above the lines 
+
+    # copy the ruby interp into the build, why does it need this on production?
+    cp -r /app/vendor/ruby-* $build_dir/vendor
+
+in the compile script.  This will show the ruby folder when you push to Heroku.  If the ruby version has changed, you will need to update the following line:
+    
+    export GEM_HOME=$build_dir/.gem/ruby/<VERSION>
+
+with the correct version.  Note that this is NOT the same as the version of ruby in /app/vendor. To get the correct version for this line, you need to put the code
+
+    op="$(ls -a $build_dir/.gem/ruby)"
+    echo "${op}"
+
+AFTER the line that says
+    
+    status "Building runtime environment"
+
+If the ruby version of the system is 1.9.2, the .gem version should be 1.9.1.  If the ruby version is 2.2.2, the .gem version should be 2.2.0.  
+
+If the Major and Minor version are mismatched, you need to clear the build cache for the app out.  To do that, add the heroku-repo plugin
+
+    heroku plugins:install https://github.com/heroku/heroku-repo.git -a <APP NAME>
+
+then clear the cache out:
+
+    heroku repo:purge_cache -a <APP NAME>
+
 Further Information
 -------------------
 
