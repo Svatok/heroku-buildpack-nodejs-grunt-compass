@@ -143,9 +143,13 @@ if test -d $cache_dir/ruby/.gem; then
   status "Restoring ruby gems directory from cache"
   cp -r $cache_dir/ruby/.gem $build_dir
   HOME=$build_dir gem update compass --user-install --no-rdoc --no-ri
+  HOME=$build_dir gem update haml --user-install --no-rdoc --no-ri
+  HOME=$build_dir gem update haml2html --user-install --no-rdoc --no-ri
 else
   status "Installing ruby gems"
   HOME=$build_dir gem install compass --user-install --no-rdoc --no-ri
+  HOME=$build_dir gem install haml --user-install --no-rdoc --no-ri
+  HOME=$build_dir gem install haml2html --user-install --no-rdoc --no-ri
 fi
 
 # copy the ruby interp into the build, why does it need this on production?
